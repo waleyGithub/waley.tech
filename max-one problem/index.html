@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    
+    <title>OneMax Problem | Hao Wu&#39;s Homepage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+
+    
+
+    
+
+    
+
+    
+<link rel="stylesheet" href="/dist/build.css?v=1.13.0.css">
+
+
+    <script>
+        window.isPost = true
+        window.aomori = {
+            
+        }
+        window.aomori_logo_typed_animated = false
+        window.aomori_search_algolia = false
+    </script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.2.0"></head>
+
+<body>
+
+    <div class="container">
+    <header class="header">
+        <div class="header-type">
+            
+            <div class="header-type-avatar avatar avatar-sm">
+                <img src="/images/waley.jpg" alt="Hao Wu">
+            </div>
+            
+            <div class="header-type-inner">
+                
+                    <a class="header-type-title" href="/">Hao Wu&#39;s Homepage</a>
+                
+    
+                
+            </div>
+        </div>
+        <div class="header-menu">
+            <div class="header-menu-inner">
+                
+                <a href="/">Home</a>
+                
+                <a href="/cv.html">CV</a>
+                
+            </div>
+            <div class="header-menu-social">
+                
+            </div>
+        </div>
+
+        <div class="header-menu-mobile">
+            <div class="header-menu-mobile-inner" id="mobile-menu-open">
+                <i class="icon icon-menu"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="header-menu-mobile-menu">
+        <div class="header-menu-mobile-menu-bg"></div>
+        <div class="header-menu-mobile-menu-wrap">
+            <div class="header-menu-mobile-menu-inner">
+                <div class="header-menu-mobile-menu-close" id="mobile-menu-close">
+                    <i class="icon icon-cross"></i>
+                </div>
+                <div class="header-menu-mobile-menu-list">
+                    
+                    <a href="/">Home</a>
+                    
+                    <a href="/cv.html">CV</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+    <div class="container">
+        <div class="main">
+            <section class="inner">
+                <section class="inner-main">
+                    <div class="post">
+    <article id="post-cksbvhw77002bqcsq6s2o4qo3" class="article article-type-post" itemscope
+    itemprop="blogPost">
+
+    <div class="article-inner">
+
+        
+          
+        
+        
+        
+
+        
+        <header class="article-header">
+            
+  
+    <h1 class="article-title" itemprop="name">
+      OneMax Problem
+    </h1>
+  
+
+        </header>
+        
+
+        <div class="article-more-info article-more-info-post hairline">
+
+            <div class="article-date">
+  <time datetime="2021-05-02T15:41:47.000Z" itemprop="datePublished">2021-05-02</time>
+</div>
+
+            
+            <div class="article-category">
+                <a class="article-category-link" href="/categories/Evolutionary-Computation/">Evolutionary Computation</a>
+            </div>
+            
+
+            
+            <div class="article-tag">
+                <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Algorithms/" rel="tag">Algorithms</a></li></ul>
+            </div>
+            
+
+            
+
+        </div>
+
+        <div class="article-entry post-inner-html hairline" itemprop="articleBody">
+            <p><font face = "微软雅黑"><strong>OneMax问题是遗传算法的入门问题：如何使一段长度固定的二进制字符串所有位置上数字之和最大。</strong></font><br>下面以长度10为例。</p>
+<h1 id="所需环境"><a href="#所需环境" class="headerlink" title="所需环境"></a>所需环境</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://www.python.org/downloads/release/python-394/">Python 3.9</a></li>
+<li><a target="_blank" rel="noopener" href="https://deap.readthedocs.io/en/master/">DEAP Library</a></li>
+<li><a target="_blank" rel="noopener" href="https://jupyter.org/">Juypter Notebook</a></li>
+</ul>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><pre><code class="python">import random
+from deap import algorithms, base, creator, tools</code></pre>
+<h2 id="定义个体"><a href="#定义个体" class="headerlink" title="定义个体"></a>定义个体</h2><pre><code class="python">creator.create(&quot;FitnessMax&quot;, base.Fitness, weights=(1.0,))
+creator.create(&quot;Individual&quot;, list, fitness=creator.FitnessMax)</code></pre>
+<pre><code class="python">toolbox = base.Toolbox()</code></pre>
+<a id="more"></a>
+<pre><code class="python">toolbox.register(&quot;attr_bool&quot;, random.randint, 0, 1)
+toolbox.register(&quot;individual&quot;, tools.initRepeat, creator.Individual, toolbox.attr_bool, n=100)
+toolbox.register(&quot;population&quot;, tools.initRepeat, list, toolbox.individual)</code></pre>
+<h2 id="定义遗传操作"><a href="#定义遗传操作" class="headerlink" title="定义遗传操作"></a>定义遗传操作</h2><pre><code class="python">def evalOneMax(individual): 
+    return (sum(individual),)</code></pre>
+<pre><code class="python">toolbox.register(&quot;evaluate&quot;, evalOneMax)
+toolbox.register(&quot;select&quot;, tools.selTournament, tournsize=3)
+
+toolbox.register(&quot;mate&quot;, tools.cxUniform, indpb=0.1)
+toolbox.register(&quot;mutate&quot;, tools.mutFlipBit, indpb=0.01)
+
+logbook = tools.Logbook()</code></pre>
+<h2 id="主体部分"><a href="#主体部分" class="headerlink" title="主体部分"></a>主体部分</h2><pre><code class="python">pop = toolbox.population(n=300)
+
+fitnesses = list(map(toolbox.evaluate, pop)) 
+for ind, fit in zip(pop, fitnesses):
+    ind.fitness.values = fit
+
+NGEN = 50
+
+for g in range(NGEN):
+   print(&quot;-- Generation %i --&quot; % g)
+
+   offspring = toolbox.select(pop, len(pop))
+   offspring = list(map(toolbox.clone, offspring))
+
+   for child1, child2 in zip(offspring[::2], offspring[1::2]): 
+       toolbox.mate(child1, child2)
+       del child1.fitness.values
+       del child2.fitness.values
+
+   for mutant in offspring: 
+       toolbox.mutate(mutant) 
+       del mutant.fitness.values
+
+   invalid_ind = [ind for ind in offspring if not ind.fitness.valid] 
+   fitnesses = map(toolbox.evaluate, invalid_ind)
+   for ind, fit in zip(invalid_ind, fitnesses):
+       ind.fitness.values = fit
+
+   pop[:] = offspring</code></pre>
+<h2 id="最优个体"><a href="#最优个体" class="headerlink" title="最优个体"></a>最优个体</h2><pre><code class="python">best_ind = tools.selBest(pop, 1)[0]
+print(&quot;Best individual is %s&quot; % (best_ind)) 
+print(&quot;With fitness %s&quot; % (best_ind.fitness.values))</code></pre>
+<p>Best individual is [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] With fitness 100.0</p>
+<h2 id="记录数据"><a href="#记录数据" class="headerlink" title="记录数据"></a>记录数据</h2><pre><code class="python">stats = tools.Statistics(key=lambda ind: ind.fitness.values)</code></pre>
+<pre><code class="python">import numpy 
+stats.register(&quot;avg&quot;, numpy.mean) 
+stats.register(&quot;std&quot;, numpy.std) 
+stats.register(&quot;min&quot;, numpy.min) 
+stats.register(&quot;max&quot;, numpy.max)</code></pre>
+<p>{‘avg’: 98.19, ‘std’: 1.2438783434618248, ‘min’: 93.0, ‘max’: 100.0}</p>
+<pre><code class="python">record = stats.compile(pop)
+print(record)</code></pre>
+<pre><code class="python">logbook = tools.Logbook()
+logbook.record(gen=0, evals=30, **record)</code></pre>
+<pre><code class="python">logbook.header = &quot;gen&quot;, &quot;avg&quot;, &quot;evals&quot;, &quot;std&quot;, &quot;min&quot;, &quot;max&quot;</code></pre>
+<pre><code class="python">print(logbook)</code></pre>
+<table>
+<thead>
+<tr>
+<th>gen</th>
+<th>avg</th>
+<th>evals</th>
+<th>std</th>
+<th>min</th>
+<th>max</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>98.19</td>
+<td>30</td>
+<td>1.24388</td>
+<td>93</td>
+<td>100</td>
+</tr>
+</tbody></table>
+<h2 id="数据可视化"><a href="#数据可视化" class="headerlink" title="数据可视化"></a>数据可视化</h2><pre><code class="python">import matplotlib.pyplot as plt 
+%matplotlib inline</code></pre>
+<pre><code class="python">gen = logbook.select(&quot;gen&quot;)
+avgs = logbook.select(&quot;avg&quot;)
+stds = logbook.select(&quot;std&quot;)</code></pre>
+<pre><code class="python">plt.rc(&#39;axes&#39;, labelsize=14)
+plt.rc(&#39;xtick&#39;, labelsize=14)
+plt.rc(&#39;ytick&#39;, labelsize=14)
+plt.rc(&#39;legend&#39;, fontsize=14)
+fig, ax1 = plt.subplots()
+line1 = ax1.errorbar(gen, avgs, yerr=stds, errorevery=2) 
+ax1.set_xlabel(&quot;Generation&quot;)
+ax1.set_ylabel(&quot;Mean Fitness&quot;)</code></pre>
+<p>Text(0, 0.5, ‘Mean Fitness’)<br><img src="/images/OneMax.png"></p>
+
+        </div>
+
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+<nav class="article-nav">
+  
+    <a href="/Report%20Respons2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <div class="article-nav-caption">下一篇</div>
+      <div class="article-nav-title">
+        
+          报告写法 2
+        
+      </div>
+    </a>
+  
+  
+    <a href="/Calton/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-caption">上一篇</div>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+
+    <section class="share">
+        <div class="share-title">分享</div>
+        <a class="share-item" target="_blank"
+            href="https://twitter.com/share?text=OneMax Problem - Hao Wu's Homepage&url=https://waley.tech/max-one%20problem/">
+            <box-icon type='logo' name='twitter'></box-icon>
+        </a>
+        <a class="share-item" target="_blank"
+            href="https://www.facebook.com/sharer.php?title=OneMax Problem - Hao Wu's Homepage&u=https://waley.tech/max-one%20problem/">
+            <box-icon name='facebook-square' type='logo' ></box-icon>
+        </a>
+        <!-- <a class="share-item" target="_blank"
+            href="https://service.weibo.com/share/share.php?title=OneMax Problem - Hao Wu's Homepage&url=https://waley.tech/max-one%20problem/&pic=">
+            <div class="n-icon n-icon-weibo"></div>
+        </a> -->
+    </section>
+
+</article>
+
+
+
+
+
+
+
+</div>
+                </section>
+            </section>
+
+             
+            <aside class="sidebar">
+            
+                
+
+
+<div class="widget" id="widget">
+    
+      
+  <div class="widget-wrap">
+    <div class="widget-inner">
+      <div class="toc post-toc-html"></div>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget-wrap widget-cate">
+    <div class="widget-title"><span>Categories</span></div>
+    <div class="widget-inner">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Evolutionary-Computation/">Evolutionary Computation</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/IELTS/">IELTS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/LeetCode/">LeetCode</a></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap widget-tags">
+    <div class="widget-title"><span>Tags</span></div>
+    <div class="widget-inner">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithms/" rel="tag">Algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CC/" rel="tag">CC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GRA/" rel="tag">GRA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Guide/" rel="tag">Guide</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Research-Proposal/" rel="tag">Research Proposal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TR/" rel="tag">TR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Writing-Classifying/" rel="tag">Writing Classifying</a></li></ul>
+    </div>
+  </div>
+
+
+    
+</div>
+
+<div id="backtop"><i class="icon icon-arrow-up"></i></div>
+            </aside>
+        </div>
+    </div>
+
+    <footer class="footer">
+    <div class="footer-wave">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#3c4859" fill-opacity="1" d="M0,160L60,181.3C120,203,240,245,360,240C480,235,600,181,720,186.7C840,192,960,256,1080,261.3C1200,267,1320,213,1380,186.7L1440,160L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>
+    </div>
+
+    <div class="footer-wrap">
+        <div class="footer-inner"> 
+            Hao Wu&#39;s Homepage &copy; 2021<br>
+            Powered By Hexo · Theme By <a href="https://github.com/lh1me/hexo-theme-aomori" target="_blank">Aomori</a>
+        </div>
+    </div>
+
+</footer>
+
+
+
+
+<script src="/dist/build.js?1.13.0.js"></script>
+
+
+<script src="/dist/custom.js?1.13.0.js"></script>
+
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>
